@@ -1,0 +1,22 @@
+name: Native CarPlay diagnostic (manual only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact dispatched source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Build and verify native diagnostic package
+        run: python3 build.py
+      - name: Upload packages and evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: CarPlayStatusProbe-${{ github.run_id }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
